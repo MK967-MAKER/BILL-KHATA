@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Messages - POS</title>
+    <link rel="stylesheet" href="superadmin.css">
+</head>
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="logo">
+                <h2>POS System</h2>
+                <p>Superadmin</p>
+            </div>
+            <nav class="nav-menu">
+                <a href="superadmin.html" class="nav-item">📊 Dashboard</a>
+                <a href="license-requests.html" class="nav-item">📝 License Requests</a>
+                <a href="#" class="nav-item active">💬 Messages</a>
+                <a href="user-list.html" class="nav-item">👥 User List</a>
+                <a href="index.html" class="nav-item logout">🚪 Logout</a>
+            </nav>
+        </aside>
+        
+        <main class="main-content">
+            <header class="top-bar">
+                <h1>User Messages</h1>
+                <div class="user-info">
+                    <button class="btn-primary" onclick="window.location.href='superadmin.html'">Back to Dashboard</button>
+                </div>
+            </header>
+            
+            <div class="content">
+                <div class="section-header">
+                    <h2>Messages from Users</h2>
+                    <div>
+                        <button class="btn-secondary" onclick="clearAllMessages()">🗑️ Clear All</button>
+                    </div>
+                </div>
+                
+                <div id="messagesContainer"></div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Chatbot Widget -->
+    <button id="chatbotToggle" class="chatbot-toggle">💬</button>
+    <div id="chatbotContainer" class="chatbot-container">
+        <div class="chatbot-header">
+            <div>
+                <h3>POS Support</h3>
+                <div class="status">🟢 Online 24/7</div>
+            </div>
+            <div class="header-buttons">
+                <button id="minimizeChatbot" class="minimize-btn">−</button>
+                <button id="closeChatbot" class="close-btn">×</button>
+            </div>
+        </div>
+        <div id="chatMessages" class="chatbot-messages"></div>
+        <div class="chatbot-input">
+            <input type="file" id="imageInput" accept="image/*" style="display: none;">
+            <button id="attachImage" class="attach-btn" title="Attach Image">📎</button>
+            <input type="text" id="chatInput" placeholder="Type your message...">
+            <button id="sendMessage">Send</button>
+        </div>
+    </div>
+    
+    <script src="superadmin-common.js"></script>
+    <script src="chatbot.js"></script>
+    <script src="messages.js"></script>
+</body>
+</html>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>License Keys - POS</title>
+    <link rel="stylesheet" href="superadmin.css">
+    <style>
+        .keys-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+        }
+        
+        .keys-stats {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .key-stat {
+            text-align: center;
+        }
+        
+        .key-stat h3 {
+            font-size: 32px;
+            margin: 0;
+            color: #667eea;
+        }
+        
+        .key-stat p {
+            margin: 5px 0 0 0;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .keys-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .key-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #e0e0e0;
+            transition: all 0.3s;
+        }
+        
+        .key-card.active {
+            border-left-color: #28a745;
+            background: #f0fff4;
+        }
+        
+        .key-card.inactive {
+            border-left-color: #6c757d;
+            background: #f8f9fa;
+        }
+        
+        .key-card.blocked {
+            border-left-color: #dc3545;
+            background: #fff5f5;
+            opacity: 0.7;
+        }
+        
+        .key-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .key-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .key-number {
+            font-weight: 700;
+            color: #333;
+            font-size: 16px;
+        }
+        
+        .key-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .key-status.active {
+            background: #28a745;
+            color: white;
+        }
+        
+        .key-status.inactive {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .key-status.blocked {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .key-code {
+            font-family: 'Courier New', monospace;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 13px;
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 10px;
+            word-break: break-all;
+        }
+        
+        .key-info {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .key-actions {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+        }
+        
+        .key-actions button {
+            flex: 1;
+            padding: 6px;
+            border: none;
+            border-radius: 5px;
+            font-size: 11px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .btn-view {
+            background: #17a2b8;
+            color: white;
+        }
+        
+        .btn-copy {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-deactivate {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-activate {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-block {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-unblock {
+            background: #28a745;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="logo">
+                <h2>POS System</h2>
+                <p>Superadmin</p>
+            </div>
+            <nav class="nav-menu">
+                <a href="superadmin.html" class="nav-item">📊 Dashboard</a>
+                <a href="license-requests.html" class="nav-item">📝 License Requests</a>
+                <a href="messages.html" class="nav-item">💬 Messages</a>
+                <a href="user-list.html" class="nav-item">👥 User List</a>
+                <a href="#" class="nav-item active">🔑 License Keys</a>
+                <a href="index.html" class="nav-item logout">🚪 Logout</a>
+            </nav>
+        </aside>
+        
+        <main class="main-content">
+            <header class="top-bar">
+                <h1>License Keys Management</h1>
+                <div class="user-info">
+                    <button class="btn-primary" onclick="window.location.href='superadmin.html'">Back to Dashboard</button>
+                </div>
+            </header>
+            
+            <div class="content">
+                <div class="keys-header">
+                    <div class="keys-stats">
+                        <div class="key-stat">
+                            <h3 id="activeKeys" style="color: #28a745;">0</h3>
+                            <p>All License Keys (Active)</p>
+                        </div>
+                    </div>
+                    <div>
+                        <button class="btn-primary" onclick="generateNewKey()" style="padding: 15px 30px;">
+                            ➕ Generate New Key
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="section-header">
+                    <h2>License Keys</h2>
+                    <div>
+                        <select id="keyFilter" onchange="loadKeys()">
+                            <option value="active">Active Keys</option>
+                            <option value="inactive">Available Keys</option>
+                            <option value="blocked">Blocked Keys</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="keys-grid" id="keysGrid"></div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="superadmin-common.js"></script>
+    <script src="license-keys.js"></script>
+</body>
+</html>

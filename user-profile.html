@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile - POS</title>
+    <link rel="stylesheet" href="superadmin.css">
+    <link rel="stylesheet" href="user-profile.css">
+    <link rel="stylesheet" href="chatbot.css">
+</head>
+<body>
+    <div class="dashboard">
+        <aside class="sidebar" id="userProfileSidebar">
+            <div class="logo" style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h2>POS System</h2>
+                    <p>Superadmin</p>
+                </div>
+                <button onclick="toggleUserProfileSidebar()" style="background: rgba(255,255,255,0.2); border: none; color: white; width: 35px; height: 35px; border-radius: 5px; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Toggle Sidebar">
+                    <span id="userSidebarToggleIcon" style="display: flex; flex-direction: column; gap: 4px;">
+                        <span style="display: block; width: 18px; height: 2px; background: white; border-radius: 2px;"></span>
+                        <span style="display: block; width: 18px; height: 2px; background: white; border-radius: 2px;"></span>
+                        <span style="display: block; width: 18px; height: 2px; background: white; border-radius: 2px;"></span>
+                    </span>
+                </button>
+            </div>
+            <nav class="nav-menu">
+                <a href="superadmin.html" class="nav-item" data-tooltip="Dashboard"><span>📊</span> <span>Dashboard</span></a>
+                <a href="license-requests.html" class="nav-item" data-tooltip="License Requests"><span>📝</span> <span>License Requests</span></a>
+                <a href="messages.html" class="nav-item" data-tooltip="Messages"><span>💬</span> <span>Messages</span></a>
+                <a href="user-list.html" class="nav-item" data-tooltip="User List"><span>👥</span> <span>User List</span></a>
+                <a href="#" class="nav-item active" data-tooltip="User Profile"><span>👤</span> <span>User Profile</span></a>
+                <a href="index.html" class="nav-item logout" data-tooltip="Logout"><span>🚪</span> <span>Logout</span></a>
+            </nav>
+        </aside>
+        
+        <main class="main-content">
+            <header class="top-bar">
+                <h1>User Profile</h1>
+                <div class="user-info">
+                    <button class="btn-primary" onclick="window.history.back()">← Back</button>
+                </div>
+            </header>
+            
+            <div class="content">
+                <!-- User Info Card -->
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        <div class="avatar-circle" id="userAvatar">U</div>
+                        <input type="file" id="profilePicInput" accept="image/*" style="display: none;">
+                        <button class="upload-btn" onclick="document.getElementById('profilePicInput').click()">📷 Change Photo</button>
+                    </div>
+                    <div class="profile-info">
+                        <h2 id="userName">User Name</h2>
+                        <p id="userContact">Contact Info</p>
+                        <span class="status-badge" id="userStatus">Active</span>
+                    </div>
+                    <div class="profile-stats-mini">
+                        <div class="mini-stat">
+                            <span class="mini-label">License</span>
+                            <span class="mini-value" id="userLicense">Lifetime</span>
+                        </div>
+                        <div class="mini-stat">
+                            <span class="mini-label">Expiry</span>
+                            <span class="mini-value" id="userExpiry">N/A</span>
+                        </div>
+                    </div>
+                    <div class="profile-actions">
+                        <button class="btn-features" id="toggleProfileBtn" onclick="toggleProfileStatus()" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);">
+                            🔒 Disable Profile
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Business Stats -->
+                <div class="business-stats">
+                    <div class="stat-box revenue">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-details">
+                            <h3 id="totalRevenue">Rs. 0</h3>
+                            <p>Total Revenue</p>
+                        </div>
+                    </div>
+                    <div class="stat-box budget" onclick="showBudgetDetails()" style="cursor: pointer;" title="Click to view details">
+                        <div class="stat-icon">🏪</div>
+                        <div class="stat-details">
+                            <h3 id="shopBudget">Rs. 0</h3>
+                            <p>Shop Budget</p>
+                        </div>
+                    </div>
+                    <div class="stat-box sales" onclick="showTab('sales')" style="cursor: pointer;" title="Click to view sales"></div>
+                        <div class="stat-icon">📈</div>
+                        <div class="stat-details">
+                            <h3 id="totalSales">0</h3>
+                            <p>Total Sales</p>
+                        </div>
+                    </div>
+                    <div class="stat-box purchases" onclick="showTab('purchases')" style="cursor: pointer;" title="Click to view purchases">
+                        <div class="stat-icon">🛒</div>
+                        <div class="stat-details">
+                            <h3 id="totalPurchases">0</h3>
+                            <p>Total Purchases</p>
+                        </div>
+                    </div>
+                    <div class="stat-box items" onclick="showTab('inventory')" style="cursor: pointer;" title="Click to view inventory">
+                        <div class="stat-icon">📦</div>
+                        <div class="stat-details">
+                            <h3 id="totalItems">0</h3>
+                            <p>Total Items</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tabs -->
+                <div class="profile-tabs">
+                    <button class="tab-btn active" onclick="showTab('sales')">Sales</button>
+                    <button class="tab-btn" onclick="showTab('purchases')">Purchases</button>
+                    <button class="tab-btn" onclick="showTab('products')">Products</button>
+                    <button class="tab-btn" onclick="showTab('inventory')">Inventory</button>
+                    <button class="tab-btn" onclick="showTab('settings')">⚙️ Settings</button>
+                </div>
+                
+                <!-- Export Button (only if feature enabled) -->
+                <div id="exportButtonContainer" style="margin-top: 15px; text-align: center; display: none;">
+                    <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); max-width: 600px; margin: 0 auto;">
+                        <h3 style="margin-bottom: 15px; color: #333;">📤 Export Transactions</h3>
+                        <div style="display: flex; gap: 15px; align-items: end; justify-content: center; flex-wrap: wrap;">
+                            <div style="flex: 1; min-width: 150px;">
+                                <label style="display: block; margin-bottom: 5px; color: #666; font-weight: 500;">From Date</label>
+                                <input type="date" id="exportFromDate" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px; font-size: 14px;">
+                            </div>
+                            <div style="flex: 1; min-width: 150px;">
+                                <label style="display: block; margin-bottom: 5px; color: #666; font-weight: 500;">To Date</label>
+                                <input type="date" id="exportToDate" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px; font-size: 14px;">
+                            </div>
+                            <button class="btn-primary" onclick="exportTransactions()" style="padding: 12px 30px; white-space: nowrap;">
+                                📥 Export to Excel
+                            </button>
+                        </div>
+                        <p style="color: #999; font-size: 13px; margin-top: 10px; margin-bottom: 0;">
+                            💡 Leave dates empty to export today's transactions only
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Sales Tab -->
+                <div id="sales" class="tab-content active">
+                    <h3>Recent Sales</h3>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                    <th>Total</th>
+                                    <th>Customer</th>
+                                </tr>
+                            </thead>
+                            <tbody id="salesTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Purchases Tab -->
+                <div id="purchases" class="tab-content">
+                    <h3>Recent Purchases</h3>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th>Cost</th>
+                                    <th>Total</th>
+                                    <th>Supplier</th>
+                                </tr>
+                            </thead>
+                            <tbody id="purchasesTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Products Tab -->
+                <div id="products" class="tab-content">
+                    <h3>Products Catalog</h3>
+                    <div class="products-grid" id="productsGrid"></div>
+                </div>
+                
+                <!-- Inventory Tab -->
+                <div id="inventory" class="tab-content">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3 style="margin: 0;">Inventory Status</h3>
+                        <button class="btn-primary" onclick="showAddInventoryModal()">➕ Add Item</button>
+                    </div>
+                    <div class="table-container"></div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Category</th>
+                                    <th>Stock</th>
+                                    <th>Unit Price</th>
+                                    <th>Total Value</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inventoryTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Settings Tab -->
+                <div id="settings" class="tab-content">
+                    <h3>User Settings & Permissions</h3>
+                    
+                    <div class="settings-section">
+                        <h4>Feature Access Control</h4>
+                        <p class="settings-description">Enable or disable features for this user</p>
+                        
+                        <div class="feature-grid">
+                            <div class="feature-card">
+                                <div class="feature-header">
+                                    <span class="feature-icon">📦</span>
+                                    <h5>Inventory Management</h5>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="feature-inventory" onchange="updateFeature('inventory')">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="feature-card">
+                                <div class="feature-header">
+                                    <span class="feature-icon">👥</span>
+                                    <h5>Client Management</h5>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="feature-clients" onchange="updateFeature('clients')">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="feature-card">
+                                <div class="feature-header">
+                                    <span class="feature-icon">🤝</span>
+                                    <h5>Subdealer Management</h5>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="feature-subdealers" onchange="updateFeature('subdealers')">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="feature-card">
+                                <div class="feature-header">
+                                    <span class="feature-icon">📊</span>
+                                    <h5>Reports & Analytics</h5>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="feature-reports" onchange="updateFeature('reports')">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="feature-card">
+                                <div class="feature-header">
+                                    <span class="feature-icon">💸</span>
+                                    <h5>Expense Tracking</h5>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="feature-expenses" onchange="updateFeature('expenses')">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="feature-card">
+                                <div class="feature-header">
+                                    <span class="feature-icon">💰</span>
+                                    <h5>Cash Register</h5>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="feature-cashRegister" onchange="updateFeature('cashRegister')">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="feature-card">
+                                <div class="feature-header">
+                                    <span class="feature-icon">📋</span>
+                                    <h5>Purchase Orders</h5>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="feature-purchaseOrders" onchange="updateFeature('purchaseOrders')">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="feature-card">
+                                <div class="feature-header">
+                                    <span class="feature-icon">🎁</span>
+                                    <h5>Discounts & Promotions</h5>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="feature-discounts" onchange="updateFeature('discounts')">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="feature-card">
+                                <div class="feature-header">
+                                    <span class="feature-icon">🔄</span>
+                                    <h5>Return Management</h5>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="feature-returns" onchange="updateFeature('returns')">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="feature-card">
+                                <div class="feature-header">
+                                    <span class="feature-icon">🏭</span>
+                                    <h5>Supplier Management</h5>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="feature-suppliers" onchange="updateFeature('suppliers')">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="feature-card">
+                                <div class="feature-header">
+                                    <span class="feature-icon">👤</span>
+                                    <h5>User Management</h5>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="feature-users" onchange="updateFeature('users')">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="feature-card">
+                                <div class="feature-header">
+                                    <span class="feature-icon">💾</span>
+                                    <h5>Backup & Restore</h5>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="feature-backup" onchange="updateFeature('backup')">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="feature-card">
+                                <div class="feature-header">
+                                    <span class="feature-icon">⚙️</span>
+                                    <h5>System Settings</h5>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="feature-settings" onchange="updateFeature('settings')">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="feature-card">
+                                <div class="feature-header">
+                                    <span class="feature-icon">📝</span>
+                                    <h5>Activity Logs</h5>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="feature-activityLogs" onchange="updateFeature('activityLogs')">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="feature-card">
+                                <div class="feature-header">
+                                    <span class="feature-icon">📷</span>
+                                    <h5>Barcode Scanner</h5>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="feature-barcode" onchange="updateFeature('barcode')">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-section">
+                        <h4>Account Settings</h4>
+                        <div class="account-settings">
+                            <div class="setting-item">
+                                <label>
+                                    <input type="checkbox" id="setting-active" onchange="updateAccountSetting('active')">
+                                    <strong>Account Active</strong>
+                                    <span class="setting-desc">User can login and access the system</span>
+                                </label>
+                            </div>
+                            <div class="setting-item">
+                                <label>
+                                    <input type="checkbox" id="setting-api" onchange="updateAccountSetting('api')">
+                                    <strong>API Access</strong>
+                                    <span class="setting-desc">Allow API integration for this user</span>
+                                </label>
+                            </div>
+                            <div class="setting-item">
+                                <label>
+                                    <input type="checkbox" id="setting-export" onchange="updateAccountSetting('export')">
+                                    <strong>Data Export</strong>
+                                    <span class="setting-desc">Allow user to export data</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="save-settings">
+                        <button class="btn-primary" onclick="saveAllSettings()">💾 Save All Settings</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Chatbot Widget -->
+    <button id="chatbotToggle" class="chatbot-toggle">💬</button>
+    <div id="chatbotContainer" class="chatbot-container">
+        <div class="chatbot-header">
+            <div>
+                <h3>POS Support</h3>
+                <div class="status">🟢 Online 24/7</div>
+            </div>
+            <div class="header-buttons">
+                <button id="minimizeChatbot" class="minimize-btn">−</button>
+                <button id="closeChatbot" class="close-btn">×</button>
+            </div>
+        </div>
+        <div id="chatMessages" class="chatbot-messages"></div>
+        <div class="chatbot-input">
+            <input type="file" id="imageInput" accept="image/*" style="display: none;">
+            <button id="attachImage" class="attach-btn" title="Attach Image">📎</button>
+            <input type="text" id="chatInput" placeholder="Type your message...">
+            <button id="sendMessage">Send</button>
+        </div>
+    </div>
+    
+    <!-- Features Modal -->
+    <div id="featuresModal" class="modal">
+        <div class="modal-content" style="max-width: 700px; max-height: 90vh; overflow-y: auto;">
+            <div style="position: sticky; top: 0; background: white; z-index: 10; padding: 20px 20px 10px 20px; margin: -30px -30px 20px -30px; border-bottom: 2px solid #e0e0e0;">
+                <span class="close" onclick="closeFeaturesModal()" title="Close and return to profile">&times;</span>
+                <h2 style="margin-top: 0;">⚙️ User Features Control</h2>
+                <p style="color: #666; margin-bottom: 0;">
+                    Enable or disable features for this user
+                </p>
+            </div>
+            
+            <div class="features-modal-grid">
+                <div class="feature-toggle-item">
+                    <div class="feature-info">
+                        <span class="feature-icon">📊</span>
+                        <div>
+                            <strong>Sales Management</strong>
+                            <p>Create and manage sales transactions</p>
+                        </div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="modal-feature-sales" onchange="quickUpdateFeature('sales')">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <div class="feature-toggle-item">
+                    <div class="feature-info">
+                        <span class="feature-icon">🛒</span>
+                        <div>
+                            <strong>Purchase Orders</strong>
+                            <p>Manage purchase orders and suppliers</p>
+                        </div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="modal-feature-purchases" onchange="quickUpdateFeature('purchases')">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <div class="feature-toggle-item">
+                    <div class="feature-info">
+                        <span class="feature-icon">📦</span>
+                        <div>
+                            <strong>Inventory Management</strong>
+                            <p>Track and manage inventory stock</p>
+                        </div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="modal-feature-inventory" onchange="quickUpdateFeature('inventory')">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <div class="feature-toggle-item">
+                    <div class="feature-info">
+                        <span class="feature-icon">📈</span>
+                        <div>
+                            <strong>Reports & Analytics</strong>
+                            <p>View business reports and analytics</p>
+                        </div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="modal-feature-reports" onchange="quickUpdateFeature('reports')">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <div class="feature-toggle-item">
+                    <div class="feature-info">
+                        <span class="feature-icon">👥</span>
+                        <div>
+                            <strong>Customer Management</strong>
+                            <p>Manage customer database</p>
+                        </div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="modal-feature-customers" onchange="quickUpdateFeature('customers')">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <div class="feature-toggle-item">
+                    <div class="feature-info">
+                        <span class="feature-icon">🏪</span>
+                        <div>
+                            <strong>Multi-Store Access</strong>
+                            <p>Access multiple store locations</p>
+                        </div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="modal-feature-multistore" onchange="quickUpdateFeature('multistore')">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <div class="feature-toggle-item">
+                    <div class="feature-info">
+                        <span class="feature-icon">💰</span>
+                        <div>
+                            <strong>Financial Reports</strong>
+                            <p>View financial statements and reports</p>
+                        </div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="modal-feature-financial" onchange="quickUpdateFeature('financial')">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <div class="feature-toggle-item">
+                    <div class="feature-info">
+                        <span class="feature-icon">🔔</span>
+                        <div>
+                            <strong>Notifications</strong>
+                            <p>Receive system notifications</p>
+                        </div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="modal-feature-notifications" onchange="quickUpdateFeature('notifications')">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <div class="feature-toggle-item">
+                    <div class="feature-info">
+                        <span class="feature-icon">📤</span>
+                        <div>
+                            <strong>Export Transactions</strong>
+                            <p>Export daily transactions to Excel/CSV</p>
+                        </div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="modal-feature-export" onchange="quickUpdateFeature('export')">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+            
+            <div style="position: sticky; bottom: 0; background: white; margin: 20px -30px -30px -30px; padding: 20px 30px; border-top: 2px solid #e0e0e0; z-index: 10;">
+                <button class="btn-primary" onclick="saveAndClose()" style="width: 100%; padding: 15px; font-size: 16px;">
+                    💾 Save & Close
+                </button>
+                <p style="color: #999; font-size: 13px; margin-top: 10px; text-align: center; margin-bottom: 0;">
+                    💡 Or toggle features and use the floating save button
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <script src="superadmin-common.js"></script>
+    <script src="chatbot.js"></script>
+    <script src="user-profile.js"></script>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Test User POS Account</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="login-box">
+            <h1>🧪 Test Account Creator</h1>
+            <h2>Create User POS Test Account</h2>
+            
+            <div id="message" style="padding: 15px; border-radius: 8px; margin: 20px 0; display: none;"></div>
+            
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                <h3 style="margin: 0 0 15px 0; color: #333;">Test Accounts:</h3>
+                
+                <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #667eea;">
+                    <h4 style="margin: 0 0 10px 0; color: #667eea;">👤 User POS (Cashier)</h4>
+                    <p style="margin: 5px 0;"><strong>Username:</strong> cashier</p>
+                    <p style="margin: 5px 0;"><strong>Password:</strong> cashier123</p>
+                    <p style="margin: 5px 0;"><strong>Type:</strong> User POS (Limited Access)</p>
+                    <button onclick="createUserPOS()" class="btn-primary" style="margin-top: 10px; width: 100%;">
+                        ✅ Create User POS Account
+                    </button>
+                </div>
+                
+                <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #28a745;">
+                    <h4 style="margin: 0 0 10px 0; color: #28a745;">🔐 Admin POS (Manager)</h4>
+                    <p style="margin: 5px 0;"><strong>Username:</strong> manager</p>
+                    <p style="margin: 5px 0;"><strong>Password:</strong> manager123</p>
+                    <p style="margin: 5px 0;"><strong>Type:</strong> Admin POS (Full Access)</p>
+                    <button onclick="createAdminPOS()" class="btn-primary" style="margin-top: 10px; width: 100%; background: #28a745;">
+                        ✅ Create Admin POS Account
+                    </button>
+                </div>
+            </div>
+            
+            <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #ffc107;">
+                <h4 style="margin: 0 0 10px 0; color: #856404;">📝 Instructions:</h4>
+                <ol style="margin: 0; padding-left: 20px; color: #856404;">
+                    <li>Click "Create User POS Account" button</li>
+                    <li>Go to <a href="index.html" style="color: #667eea;">Login Page</a></li>
+                    <li>Login with: <strong>cashier / cashier123</strong></li>
+                    <li>You'll be redirected to User POS</li>
+                </ol>
+            </div>
+            
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button onclick="viewAllAccounts()" class="btn-secondary" style="flex: 1;">
+                    👥 View All Accounts
+                </button>
+                <button onclick="clearAllAccounts()" class="btn-secondary" style="flex: 1; background: #dc3545;">
+                    🗑️ Clear All Accounts
+                </button>
+            </div>
+            
+            <div class="signup-link">
+                <p><a href="index.html">← Back to Login</a></p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function showMessage(text, type = 'success') {
+            const messageDiv = document.getElementById('message');
+            messageDiv.style.display = 'block';
+            messageDiv.style.background = type === 'success' ? '#d4edda' : '#f8d7da';
+            messageDiv.style.color = type === 'success' ? '#155724' : '#721c24';
+            messageDiv.style.border = `1px solid ${type === 'success' ? '#c3e6cb' : '#f5c6cb'}`;
+            messageDiv.innerHTML = text;
+            
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 5000);
+        }
+        
+        function createUserPOS() {
+            let users = JSON.parse(localStorage.getItem('users')) || [];
+            
+            // Check if already exists
+            if (users.find(u => u.username === 'cashier')) {
+                showMessage('❌ User POS account "cashier" already exists!', 'error');
+                return;
+            }
+            
+            const userPOSAccount = {
+                username: 'cashier',
+                password: 'cashier123',
+                mobile: '03001234567',
+                email: 'cashier@pos.com',
+                role: 'user',
+                accountType: 'user', // User POS
+                profileEnabled: true,
+                createdDate: new Date().toISOString()
+            };
+            
+            users.push(userPOSAccount);
+            localStorage.setItem('users', JSON.stringify(users));
+            
+            showMessage('✅ User POS account created successfully!<br><br><strong>Username:</strong> cashier<br><strong>Password:</strong> cashier123<br><br>Go to <a href="index.html" style="color: #667eea;">Login Page</a> to test!', 'success');
+        }
+        
+        function createAdminPOS() {
+            let users = JSON.parse(localStorage.getItem('users')) || [];
+            
+            // Check if already exists
+            if (users.find(u => u.username === 'manager')) {
+                showMessage('❌ Admin POS account "manager" already exists!', 'error');
+                return;
+            }
+            
+            const adminPOSAccount = {
+                username: 'manager',
+                password: 'manager123',
+                mobile: '03009876543',
+                email: 'manager@pos.com',
+                role: 'user',
+                accountType: 'admin', // Admin POS
+                profileEnabled: true,
+                createdDate: new Date().toISOString()
+            };
+            
+            users.push(adminPOSAccount);
+            localStorage.setItem('users', JSON.stringify(users));
+            
+            showMessage('✅ Admin POS account created successfully!<br><br><strong>Username:</strong> manager<br><strong>Password:</strong> manager123<br><br>Go to <a href="index.html" style="color: #667eea;">Login Page</a> to test!', 'success');
+        }
+        
+        function viewAllAccounts() {
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            const admins = JSON.parse(localStorage.getItem('admins')) || [];
+            
+            let accountsList = '<h3>📋 All Accounts:</h3>';
+            
+            accountsList += '<h4 style="color: #667eea; margin-top: 15px;">Superadmin:</h4>';
+            accountsList += '<div style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin: 5px 0;">';
+            accountsList += '<strong>Username:</strong> superadmin | <strong>Password:</strong> super123';
+            accountsList += '</div>';
+            
+            if (admins.length > 0) {
+                accountsList += '<h4 style="color: #28a745; margin-top: 15px;">Admins:</h4>';
+                admins.forEach(admin => {
+                    accountsList += '<div style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin: 5px 0;">';
+                    accountsList += `<strong>Username:</strong> ${admin.username} | <strong>Password:</strong> ${admin.password}`;
+                    accountsList += '</div>';
+                });
+            }
+            
+            if (users.length > 0) {
+                accountsList += '<h4 style="color: #667eea; margin-top: 15px;">Users:</h4>';
+                users.forEach(user => {
+                    const type = user.accountType === 'user' ? '👤 User POS' : '🔐 Admin POS';
+                    accountsList += '<div style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin: 5px 0;">';
+                    accountsList += `<strong>${type}</strong><br>`;
+                    accountsList += `<strong>Username:</strong> ${user.username} | <strong>Password:</strong> ${user.password}`;
+                    accountsList += '</div>';
+                });
+            } else {
+                accountsList += '<p style="color: #999; margin-top: 10px;">No user accounts found.</p>';
+            }
+            
+            showMessage(accountsList, 'success');
+        }
+        
+        function clearAllAccounts() {
+            if (confirm('⚠️ Are you sure you want to delete ALL user accounts?\n\nThis will NOT delete superadmin or admin accounts.')) {
+                localStorage.removeItem('users');
+                showMessage('✅ All user accounts cleared!', 'success');
+            }
+        }
+    </script>
+</body>
+</html>

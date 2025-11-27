@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Superadmin Dashboard - POS</title>
+    <link rel="stylesheet" href="superadmin.css">
+    <link rel="stylesheet" href="chatbot.css">
+</head>
+<body>
+    <div class="dashboard">
+        <aside class="sidebar" id="superadminSidebar">
+            <div class="logo" style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h2>POS System</h2>
+                    <p>Superadmin</p>
+                </div>
+                <button onclick="toggleSuperadminSidebar()" style="background: rgba(255,255,255,0.2); border: none; color: white; width: 35px; height: 35px; border-radius: 5px; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Toggle Sidebar">
+                    <span id="sidebarToggleIcon" style="display: flex; flex-direction: column; gap: 4px;">
+                        <span style="display: block; width: 18px; height: 2px; background: white; border-radius: 2px;"></span>
+                        <span style="display: block; width: 18px; height: 2px; background: white; border-radius: 2px;"></span>
+                        <span style="display: block; width: 18px; height: 2px; background: white; border-radius: 2px;"></span>
+                    </span>
+                </button>
+            </div>
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active" onclick="showSection('overview')" data-tooltip="Overview"><span>📊</span> <span>Overview</span></a>
+                <a href="#" class="nav-item" onclick="showSection('users')" data-tooltip="Users"><span>👥</span> <span>Users</span></a>
+                <a href="#" class="nav-item" onclick="showSection('admins')" data-tooltip="Admins"><span>🔐</span> <span>Admins</span></a>
+                <a href="#" class="nav-item" onclick="showSection('requests')" data-tooltip="Requests"><span>📝</span> <span>Requests</span></a>
+                <a href="#" class="nav-item" onclick="showSection('messages')" data-tooltip="Messages"><span>💬</span> <span>Messages</span></a>
+                <a href="#" class="nav-item" onclick="showSection('notifications')" data-tooltip="Notifications">
+                    <span>🔔</span> <span>Notifications</span>
+                    <span id="notificationBadge" style="background: #dc3545; color: white; padding: 2px 8px; border-radius: 10px; font-size: 11px; margin-left: 5px; display: none;">0</span>
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('settings')" data-tooltip="Settings"><span>⚙️</span> <span>Settings</span></a>
+                <a href="license-keys.html" class="nav-item" data-tooltip="License Keys"><span>🔑</span> <span>License Keys</span></a>
+                <a href="index.html" class="nav-item logout" data-tooltip="Logout"><span>🚪</span> <span>Logout</span></a>
+            </nav>
+        </aside>
+        
+        <main class="main-content">
+            <header class="top-bar">
+                <h1 id="pageTitle">Dashboard Overview</h1>
+                <div class="user-info">
+                    <span>Superadmin</span>
+                </div>
+            </header>
+            
+            <div class="content">
+                <!-- Overview Section -->
+                <section id="overview" class="section active">
+                    <div class="license-buttons">
+                        <button class="license-btn total" onclick="filterUsers('total')">
+                            <div class="btn-icon">👥</div>
+                            <div class="btn-info">
+                                <h3 id="totalUsersBtn">0</h3>
+                                <p>Total Users</p>
+                            </div>
+                        </button>
+                        <button class="license-btn purchased" onclick="filterUsers('purchased')">
+                            <div class="btn-icon">💳</div>
+                            <div class="btn-info">
+                                <h3 id="purchasedUsers">0</h3>
+                                <p>License Purchased</p>
+                            </div>
+                        </button>
+                        <button class="license-btn active" onclick="filterUsers('active')">
+                            <div class="btn-icon">✅</div>
+                            <div class="btn-info">
+                                <h3 id="activeUsers">0</h3>
+                                <p>Active Users</p>
+                            </div>
+                        </button>
+                        <button class="license-btn expired" onclick="filterUsers('expired')">
+                            <div class="btn-icon">❌</div>
+                            <div class="btn-info">
+                                <h3 id="expiredUsers">0</h3>
+                                <p>Expired Users</p>
+                            </div>
+                        </button>
+                        <button class="license-btn expiring" onclick="filterUsers('expiring')">
+                            <div class="btn-icon">⚠️</div>
+                            <div class="btn-info">
+                                <h3 id="expiringUsers">0</h3>
+                                <p>To Be Expired</p>
+                            </div>
+                        </button>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card" onclick="showSection('admins')" style="cursor: pointer;">
+                            <div class="stat-icon">🔐</div>
+                            <div class="stat-info">
+                                <h3 id="totalAdmins">0</h3>
+                                <p>Admins</p>
+                            </div>
+                        </div>
+                        <div class="stat-card" onclick="window.location.href='license-requests.html'" style="cursor: pointer;">
+                            <div class="stat-icon">📝</div>
+                            <div class="stat-info">
+                                <h3 id="pendingRequests">0</h3>
+                                <p>Pending Requests</p>
+                            </div>
+                        </div>
+                        <div class="stat-card" onclick="window.location.href='messages.html'" style="cursor: pointer;">
+                            <div class="stat-icon">💬</div>
+                            <div class="stat-info">
+                                <h3 id="totalMessages">0</h3>
+                                <p>Messages</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="charts-grid">
+                        <div class="chart-card">
+                            <h3>Recent Activity</h3>
+                            <div id="activityList"></div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Users Section -->
+                <section id="users" class="section">
+                    <div class="section-header">
+                        <h2>User Management</h2>
+                        <div>
+                            <select id="userFilter" onchange="loadUsers()">
+                                <option value="all">All Users</option>
+                                <option value="purchased">License Purchased</option>
+                                <option value="active">Active</option>
+                                <option value="expired">Expired</option>
+                                <option value="expiring">To Be Expired</option>
+                            </select>
+                            <button class="btn-primary" onclick="showAddUserModal()">+ Add User</button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Contact</th>
+                                    <th>License Status</th>
+                                    <th>Expiry Date</th>
+                                    <th>Days Left</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody"></tbody>
+                        </table>
+                    </div>
+                </section>
+                
+                <!-- Admins Section -->
+                <section id="admins" class="section">
+                    <div class="section-header">
+                        <h2>Admin Management</h2>
+                        <button class="btn-primary" onclick="showAddAdminModal()">+ Add Admin</button>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Password</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminsTableBody"></tbody>
+                        </table>
+                    </div>
+                </section>
+                
+                <!-- Requests Section -->
+                <section id="requests" class="section">
+                    <h2>Forget Key Requests</h2>
+                    <div id="requestsList"></div>
+                </section>
+                
+                <!-- Messages Section -->
+                <section id="messages" class="section">
+                    <h2>User Messages</h2>
+                    <div id="messagesList"></div>
+                </section>
+                
+                <!-- Notifications Section -->
+                <section id="notifications" class="section">
+                    <div class="section-header">
+                        <h2>🔔 Chatbot Notifications</h2>
+                        <button class="btn-primary" onclick="sendBroadcastNotification()">📢 Send Notification</button>
+                    </div>
+                    <div id="notificationsList"></div>
+                </section>
+                
+                <!-- Settings Section -->
+                <section id="settings" class="section">
+                    <h2>System Settings</h2>
+                    <div class="settings-grid">
+                        <div class="setting-card">
+                            <h3>Security</h3>
+                            <label>
+                                <input type="checkbox" id="requireApproval" checked>
+                                Require admin approval for password reset
+                            </label>
+                            <label>
+                                <input type="checkbox" id="twoFactorAuth">
+                                Enable two-factor authentication
+                            </label>
+                        </div>
+                        <div class="setting-card">
+                            <h3>System</h3>
+                            <button class="btn-secondary" onclick="clearAllData()">Clear All Data</button>
+                            <button class="btn-secondary" onclick="exportData()">Export Data</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Add User Modal -->
+    <div id="addUserModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('addUserModal')">&times;</span>
+            <h2>Add New User</h2>
+            <form id="addUserForm">
+                <div class="input-group">
+                    <label>Username</label>
+                    <input type="text" id="newUsername" required>
+                </div>
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="newPassword" required>
+                </div>
+                <div class="input-group">
+                    <label>Mobile</label>
+                    <input type="tel" id="newMobile">
+                </div>
+                <div class="input-group">
+                    <label>Email</label>
+                    <input type="email" id="newEmail">
+                </div>
+                <div class="input-group">
+                    <label>License Type</label>
+                    <select id="licenseType" required onchange="updateLicenseFee()">
+                        <option value="monthly">Monthly License (30 days) - Rs. 1,000</option>
+                        <option value="lifetime">Lifetime License - Rs. 5,000</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>License Fee</label>
+                    <input type="text" id="licenseFee" readonly value="Rs. 1,000">
+                </div>
+                <button type="submit" class="btn-primary">Add User</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Edit User Modal with Features Control -->
+    <div id="editUserModal" class="modal">
+        <div class="modal-content" style="max-width: 700px;">
+            <span class="close" onclick="closeModal('editUserModal')">&times;</span>
+            <h2>✏️ Edit User & Features</h2>
+            <form id="editUserForm">
+                <input type="hidden" id="editUserIndex">
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="input-group">
+                        <label>Username</label>
+                        <input type="text" id="editUsername" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Mobile</label>
+                        <input type="tel" id="editMobile">
+                    </div>
+                    <div class="input-group">
+                        <label>Email</label>
+                        <input type="email" id="editEmail">
+                    </div>
+                    <div class="input-group">
+                        <label>Password <small>(leave empty to keep)</small></label>
+                        <input type="password" id="editPassword" placeholder="New password">
+                    </div>
+                    <div class="input-group">
+                        <label>License Type</label>
+                        <select id="editLicenseType">
+                            <option value="trial">Trial</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="lifetime">Lifetime</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Status</label>
+                        <select id="editUserStatus">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="suspended">Suspended</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <h3 style="margin: 20px 0 15px 0; border-top: 2px solid #e0e0e0; padding-top: 15px;">🔐 Feature Access Control</h3>
+                <p style="color: #666; font-size: 13px; margin-bottom: 15px;">Enable or disable features for this user</p>
+                
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+                    <label style="display: flex; align-items: center; gap: 8px; padding: 10px; background: #f8f9fa; border-radius: 8px; cursor: pointer;">
+                        <input type="checkbox" id="feat_inventory" checked> 📦 Inventory
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; padding: 10px; background: #f8f9fa; border-radius: 8px; cursor: pointer;">
+                        <input type="checkbox" id="feat_clients" checked> 👥 Clients
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; padding: 10px; background: #f8f9fa; border-radius: 8px; cursor: pointer;">
+                        <input type="checkbox" id="feat_subdealers" checked> 🤝 Subdealers
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; padding: 10px; background: #f8f9fa; border-radius: 8px; cursor: pointer;">
+                        <input type="checkbox" id="feat_reports" checked> 📊 Reports
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; padding: 10px; background: #f8f9fa; border-radius: 8px; cursor: pointer;">
+                        <input type="checkbox" id="feat_expenses" checked> 💸 Expenses
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; padding: 10px; background: #f8f9fa; border-radius: 8px; cursor: pointer;">
+                        <input type="checkbox" id="feat_cashRegister" checked> 💰 Cash Register
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; padding: 10px; background: #f8f9fa; border-radius: 8px; cursor: pointer;">
+                        <input type="checkbox" id="feat_purchaseOrders" checked> 📋 Purchase Orders
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; padding: 10px; background: #f8f9fa; border-radius: 8px; cursor: pointer;">
+                        <input type="checkbox" id="feat_discounts" checked> 🎁 Discounts
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; padding: 10px; background: #f8f9fa; border-radius: 8px; cursor: pointer;">
+                        <input type="checkbox" id="feat_returns" checked> 🔄 Returns
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; padding: 10px; background: #f8f9fa; border-radius: 8px; cursor: pointer;">
+                        <input type="checkbox" id="feat_suppliers" checked> 🏭 Suppliers
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; padding: 10px; background: #f8f9fa; border-radius: 8px; cursor: pointer;">
+                        <input type="checkbox" id="feat_users" checked> 👤 User Management
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; padding: 10px; background: #f8f9fa; border-radius: 8px; cursor: pointer;">
+                        <input type="checkbox" id="feat_backup" checked> 💾 Backup
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; padding: 10px; background: #f8f9fa; border-radius: 8px; cursor: pointer;">
+                        <input type="checkbox" id="feat_settings" checked> ⚙️ Settings
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; padding: 10px; background: #f8f9fa; border-radius: 8px; cursor: pointer;">
+                        <input type="checkbox" id="feat_activityLogs" checked> 📝 Activity Logs
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; padding: 10px; background: #f8f9fa; border-radius: 8px; cursor: pointer;">
+                        <input type="checkbox" id="feat_barcode" checked> 📷 Barcode
+                    </label>
+                </div>
+                
+                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 20px;">💾 Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Admin Modal -->
+    <div id="addAdminModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('addAdminModal')">&times;</span>
+            <h2>Add New Admin</h2>
+            <form id="addAdminForm">
+                <div class="input-group">
+                    <label>Username</label>
+                    <input type="text" id="newAdminUsername" required>
+                </div>
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="newAdminPassword" required>
+                </div>
+                <div class="input-group">
+                    <label>Email</label>
+                    <input type="email" id="newAdminEmail" required>
+                </div>
+                <button type="submit" class="btn-primary">Add Admin</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Edit Admin Modal -->
+    <div id="editAdminModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('editAdminModal')">&times;</span>
+            <h2>Edit Admin</h2>
+            <form id="editAdminForm">
+                <input type="hidden" id="editAdminIndex">
+                <div class="input-group">
+                    <label>Username</label>
+                    <input type="text" id="editAdminUsername" required>
+                </div>
+                <div class="input-group">
+                    <label>Email</label>
+                    <input type="email" id="editAdminEmail" required>
+                </div>
+                <div class="input-group">
+                    <label>Password</label>
+                    <div style="position: relative;">
+                        <input type="password" id="editAdminPassword" required>
+                        <button type="button" onclick="toggleEditPassword()" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 18px;">👁️</button>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary">Update Admin</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Reply to User Modal -->
+    <div id="replyModal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <span class="close" onclick="closeModal('replyModal')">&times;</span>
+            <h2>💬 Reply to User</h2>
+            <div id="replyUserInfo" style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 15px 0;"></div>
+            <div class="input-group">
+                <label>Your Reply</label>
+                <textarea id="replyText" rows="4" placeholder="Type your reply here..." required></textarea>
+            </div>
+            <button class="btn-primary" onclick="sendReply()" style="width: 100%;">📤 Send Reply</button>
+        </div>
+    </div>
+    
+    <!-- Broadcast Notification Modal -->
+    <div id="broadcastModal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <span class="close" onclick="closeModal('broadcastModal')">&times;</span>
+            <h2>📢 Send Notification</h2>
+            <form id="broadcastForm">
+                <div class="input-group">
+                    <label>Send To</label>
+                    <select id="broadcastRecipient" onchange="toggleUserSelect()">
+                        <option value="all">All Users</option>
+                        <option value="specific">Specific User</option>
+                    </select>
+                </div>
+                <div class="input-group" id="userSelectGroup" style="display: none;">
+                    <label>Select User</label>
+                    <select id="specificUser"></select>
+                </div>
+                <div class="input-group">
+                    <label>Title</label>
+                    <input type="text" id="broadcastTitle" placeholder="Notification title" required>
+                </div>
+                <div class="input-group">
+                    <label>Message</label>
+                    <textarea id="broadcastMessage" rows="4" placeholder="Notification message" required></textarea>
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%;">Send Notification</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Chatbot Widget -->
+    <button id="chatbotToggle" class="chatbot-toggle">💬</button>
+    <div id="chatbotContainer" class="chatbot-container">
+        <div class="chatbot-header">
+            <div>
+                <h3>POS Support</h3>
+                <div class="status">🟢 Online 24/7</div>
+            </div>
+            <div class="header-buttons">
+                <button id="minimizeChatbot" class="minimize-btn">−</button>
+                <button id="closeChatbot" class="close-btn">×</button>
+            </div>
+        </div>
+        <div id="chatMessages" class="chatbot-messages"></div>
+        <div class="chatbot-input">
+            <input type="file" id="imageInput" accept="image/*" style="display: none;">
+            <button id="attachImage" class="attach-btn" title="Attach Image">📎</button>
+            <input type="text" id="chatInput" placeholder="Type your message...">
+            <button id="sendMessage">Send</button>
+        </div>
+    </div>
+    
+    <script src="chatbot.js"></script>
+    <script src="superadmin-common.js"></script>
+    <script src="superadmin.js"></script>
+</body>
+</html>

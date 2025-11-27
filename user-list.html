@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User List - POS</title>
+    <link rel="stylesheet" href="superadmin.css">
+    <link rel="stylesheet" href="chatbot.css">
+</head>
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="logo">
+                <h2>POS System</h2>
+                <p>Superadmin</p>
+            </div>
+            <nav class="nav-menu">
+                <a href="superadmin.html" class="nav-item">📊 Dashboard</a>
+                <a href="license-requests.html" class="nav-item">📝 License Requests</a>
+                <a href="messages.html" class="nav-item">💬 Messages</a>
+                <a href="#" class="nav-item active">👥 User List</a>
+                <a href="index.html" class="nav-item logout">🚪 Logout</a>
+            </nav>
+        </aside>
+        
+        <main class="main-content">
+            <header class="top-bar">
+                <h1 id="pageTitle">User List</h1>
+                <div class="user-info">
+                    <button class="btn-primary" onclick="window.location.href='superadmin.html'">Back to Dashboard</button>
+                </div>
+            </header>
+            
+            <div class="content">
+                <div class="section-header">
+                    <h2 id="listTitle">All Users</h2>
+                    <div>
+                        <select id="userFilter" onchange="loadFilteredUsers()">
+                            <option value="all">All Users</option>
+                            <option value="purchased">License Purchased</option>
+                            <option value="active">Active Users</option>
+                            <option value="expired">Expired Users</option>
+                            <option value="expiring">To Be Expired</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="license-info-cards">
+                    <div class="info-card">
+                        <h3>License Terms & Pricing</h3>
+                        <div class="price-list">
+                            <div class="price-item">
+                                <span class="price-label">Monthly License (30 days)</span>
+                                <span class="price-value">Rs. 1,000</span>
+                            </div>
+                            <div class="price-item">
+                                <span class="price-label">Lifetime License</span>
+                                <span class="price-value">Rs. 5,000</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Username</th>
+                                <th>Contact</th>
+                                <th>License Type</th>
+                                <th>Status</th>
+                                <th>Expiry Date</th>
+                                <th>Days Left</th>
+                                <th>Fee</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Chatbot Widget -->
+    <button id="chatbotToggle" class="chatbot-toggle">💬</button>
+    <div id="chatbotContainer" class="chatbot-container">
+        <div class="chatbot-header">
+            <div>
+                <h3>POS Support</h3>
+                <div class="status">🟢 Online 24/7</div>
+            </div>
+            <div class="header-buttons">
+                <button id="minimizeChatbot" class="minimize-btn">−</button>
+                <button id="closeChatbot" class="close-btn">×</button>
+            </div>
+        </div>
+        <div id="chatMessages" class="chatbot-messages"></div>
+        <div class="chatbot-input">
+            <input type="file" id="imageInput" accept="image/*" style="display: none;">
+            <button id="attachImage" class="attach-btn" title="Attach Image">📎</button>
+            <input type="text" id="chatInput" placeholder="Type your message...">
+            <button id="sendMessage">Send</button>
+        </div>
+    </div>
+    
+    <script src="superadmin-common.js"></script>
+    <script src="chatbot.js"></script>
+    <script src="user-list.js"></script>
+</body>
+</html>

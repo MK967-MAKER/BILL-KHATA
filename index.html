@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POS Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="login-box">
+            <h1>🏪 POS System</h1>
+            <h2>Login</h2>
+            
+            <form id="loginForm">
+                <div class="input-group">
+                    <label for="username">Username / Mobile Number</label>
+                    <input type="text" id="username" placeholder="Enter username or mobile" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Enter password" required>
+                </div>
+                
+                <button type="submit" class="btn-primary">🚀 Login</button>
+            </form>
+            
+            <div class="signup-link">
+                <p>Don't have an account? <a href="signup.html">Sign Up</a></p>
+                <p><a href="forgot-password.html">Forgot Password?</a></p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Chatbot Widget -->
+    <div id="chatbot" class="chatbot">
+        <div class="chatbot-header" id="chatbotHeader">
+            <span>Admin Support 24/7</span>
+            <button id="closeChatbot">×</button>
+        </div>
+        <div class="chatbot-messages" id="chatbotMessages">
+            <div class="bot-message">Hello! How can I help you today?</div>
+        </div>
+        <div class="chatbot-input">
+            <input type="text" id="chatInput" placeholder="Type your message...">
+            <button id="sendMessage">Send</button>
+        </div>
+    </div>
+    
+    <button id="chatbotToggle" class="chatbot-toggle">💬</button>
+    
+    <script src="init-data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
